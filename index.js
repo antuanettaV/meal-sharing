@@ -1,17 +1,16 @@
-const express = require('express');
+require('dotenv').config();
+
+const express = require('express'); 
 const knex = require('knex')({
-    client: 'mysql',
+    client: 'mysql', 
     connection: {
-        host: '127.0.0.1',
-        port: 3306,
-        user: 'root',
-        password: 'my-secret-pw',
-        database: 'test'
+        host: process.env.DB_HOST, 
+        port: process.env.DB_PORT,
+        user: process.env.DB_USER, 
+        password: process.env.DB_PASSWORD, 
+        database: process.env.DB_NAME 
     }
 });
-
-const mealsRouter = require('./routers/meals');
-const reservationsRouter = require('./routers/reservations');
 
 const app = express();
 const port = 3000;
@@ -19,11 +18,6 @@ const port = 3000;
 const sendJSON = (res, status, data) => {
     res.status(status).json(data);
 };
-
-app.use(express.json());
-
-app.use('/api/meals', mealsRouter);
-app.use('/api/reservations', reservationsRouter);
 
 app.get('/test-connection', async (req, res) => {
     try {
@@ -37,8 +31,8 @@ app.get('/test-connection', async (req, res) => {
 
 app.get('/future-meals', async (req, res) => {
     try {
-        const futureMeals = await knex.raw("SELECT * FROM meal WHERE when > NOW()");
-        sendJSON(res, 200, futureMeals[0].length ? futureMeals[0] : []);
+        const futureMeals = await knex.raw("SELECT * FROM meal WHERE `when` > NOW()");
+        sendJSON(res, 200, futureMeals[0].length ? futureMeals[0] : []); 
     } catch (error) {
         console.error("Error retrieving future meals:", error);
         sendJSON(res, 500, { error: "An error occurred while retrieving future meals." });
@@ -47,8 +41,8 @@ app.get('/future-meals', async (req, res) => {
 
 app.get('/past-meals', async (req, res) => {
     try {
-        const pastMeals = await knex.raw("SELECT * FROM meal WHERE when < NOW()");
-        sendJSON(res, 200, pastMeals[0].length ? pastMeals[0] : []);
+        const pastMeals = await knex.raw("SELECT * FROM meal WHERE `when` < NOW()");
+        sendJSON(res, 200, pastMeals[0].length ? pastMeals[0] : []); 
     } catch (error) {
         console.error("Error retrieving past meals:", error);
         sendJSON(res, 500, { error: "An error occurred while retrieving past meals." });
@@ -58,7 +52,7 @@ app.get('/past-meals', async (req, res) => {
 app.get('/all-meals', async (req, res) => {
     try {
         const allMeals = await knex.raw("SELECT * FROM meal ORDER BY id ASC");
-        sendJSON(res, 200, allMeals[0].length ? allMeals[0] : []);
+        sendJSON(res, 200, allMeals[0].length ? allMeals[0] : []); 
     } catch (error) {
         console.error("Error retrieving all meals:", error);
         sendJSON(res, 500, { error: "An error occurred while retrieving all meals." });
@@ -68,10 +62,10 @@ app.get('/all-meals', async (req, res) => {
 app.get('/first-meal', async (req, res) => {
     try {
         const firstMeal = await knex.raw("SELECT * FROM meal ORDER BY id ASC LIMIT 1");
-        if (firstMeal[0].length === 0) {
+        if (firstMeal[0].length === 0) { 
             sendJSON(res, 404, { message: "No meals found." });
         } else {
-            sendJSON(res, 200, firstMeal[0][0]);
+            sendJSON(res, 200, firstMeal[0][0]); 
         }
     } catch (error) {
         console.error("Error retrieving first meal:", error);
@@ -82,7 +76,7 @@ app.get('/first-meal', async (req, res) => {
 app.get('/last-meal', async (req, res) => {
     try {
         const lastMeal = await knex.raw("SELECT * FROM meal ORDER BY id DESC LIMIT 1");
-        if (lastMeal[0].length === 0) {
+        if (lastMeal[0].length === 0) { 
             sendJSON(res, 404, { message: "No meals found." });
         } else {
             sendJSON(res, 200, lastMeal[0][0]);

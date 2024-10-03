@@ -2,20 +2,21 @@ const express = require('express');
 const knex = require('knex')({
     client: 'mysql',
     connection: {
-        host: '127.0.0.1',
-        port: 3306,
-        user: 'root',
-        password: 'my-secret-pw',
-        database: 'test'
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
     }
 });
+require('dotenv').config();
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const meals = await knex.select().from('meal');
-        res.status(200).json(meals.length ? meals : []);
+        const meals = await knex('meal').select('*');
+        res.status(200).json(meals);
     } catch (error) {
         console.error("Error retrieving meals:", error);
         res.status(500).json({ error: "An error occurred while retrieving meals." });
@@ -24,6 +25,11 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     const newMeal = req.body;
+
+      if (!newMeal.name || !newMeal.description || !newMeal.price) {
+        return res.status(400).json({ error: "Meal name, description, and price are required." });
+    }
+
     try {
         const result = await knex('meal').insert(newMeal);
         res.status(201).json({ message: 'Meal created', id: result[0] });
@@ -63,6 +69,7 @@ router.put('/:id', async (req, res) => {
         res.status(500).json({ error: `An error occurred while updating meal with ID ${id}.` });
     }
 });
+
 
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
