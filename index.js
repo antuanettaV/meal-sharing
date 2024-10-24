@@ -10,7 +10,6 @@ app.use(express.json());
 
 const sendJSON = (res, status, data) => {
     res.status(status).json(data);
-    
 };
 
 app.get('/test-connection', async (req, res) => {
@@ -78,6 +77,58 @@ app.get('/last-meal', async (req, res) => {
     } catch (error) {
         console.error("Error retrieving last meal:", error);
         sendJSON(res, 500, { error: "An error occurred while retrieving the last meal." });
+    }
+});
+
+app.get('/api/meals', async (req, res) => {
+    const {
+        maxPrice,
+        availableReservations,
+        title,
+        dateAfter,
+        dateBefore,
+        limit,
+        sortKey = 'when',
+        sortDir = 'asc',
+    } = req.query;
+
+     let query = knex('meal');
+
+        if (maxPrice) {
+        query = query.where('price', '<', maxPrice);
+    }
+
+     if (availableReservations) {
+        const isAvailable = availableReservations === 'true';
+        query = query.where('max_reservations', isAvailable ? '>' : '=', knex.raw('(SELECT COUNT(*) FROM reservations WHERE meal_id = meal.id)'));
+    }
+
+       if (title) {
+        query = query.where('title', 'like', `%${title}%`);
+    }
+
+       if (dateAfter) {
+        query = query.where('date', '>', dateAfter);
+    }
+
+       if (dateBefore) {
+        query = query.where('date', '<', dateBefore);
+    }
+
+        if (['when', 'max_reservations', 'price'].includes(sortKey)) {
+        query = query.orderBy(sortKey, sortDir);
+    }
+
+        if (limit) {
+        query = query.limit(limit);
+    }
+
+    try {
+        const meals = await query;
+        sendJSON(res, 200, meals);
+    } catch (error) {
+        console.error("Error retrieving meals:", error);
+        sendJSON(res, 500, { error: "An error occurred while retrieving meals." });
     }
 });
 
