@@ -1,8 +1,30 @@
 {
+  "name": "meal-sharing",
+  "version": "1.0.0",
+  "description": "Meal sharing application for sharing and discovering meals.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+},
   "dependencies": {
-    "dotenv": "^16.4.5",
-    "express": "^4.21.0",
-    "knex": "^3.1.0",
-    "mysql": "^2.18.1"
-  }
+    "express": "^4.x.x",
+    "cors": "^2.x.x",
+    "body-parser": "^1.x.x",
+    "knex": "^0.x.x",
+    "dotenv": "^10.x.x",
+    "mysql": "^2.x.x"
+  },
+  "devDependencies": {
+    "nodemon": "^2.x.x",
+    "eslint": "^7.x.x",
+    "prettier": "^2.x.x",
+    "jest": "^27.x.x",
+    "supertest": "^6.x.x"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
+
