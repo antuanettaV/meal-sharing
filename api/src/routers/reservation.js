@@ -1,20 +1,23 @@
 import express from 'express';
 import knex from 'knex';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const db = knex({
     client: 'mysql',
     connection: {
-        host: '127.0.0.1',
-        port: 3306,
-        user: 'root',
-        password: 'my-secret-pw',
-        database: 'test'
+        host: process.env.DB_HOST || '127.0.0.1',
+        port: process.env.DB_PORT || 3306,
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASSWORD || 'my-secret-pw',
+        database: process.env.DB_NAME || 'test'
     }
 });
 
-const router = express.Router();
+const reservationRouter = express.Router();
 
-router.get('/', async (req, res) => {
+reservationRouter.get('/', async (req, res) => {
     try {
         const reservations = await db.select().from('reservation');
         res.status(200).json(reservations.length ? reservations : []);
@@ -24,7 +27,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+reservationRouter.post('/', async (req, res) => {
     const newReservation = req.body;
     try {
         const result = await db('reservation').insert(newReservation);
@@ -35,7 +38,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
+reservationRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const reservation = await db('reservation').where({ id }).first();
@@ -50,7 +53,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.put('/:id', async (req, res) => {
+reservationRouter.put('/:id', async (req, res) => {
     const { id } = req.params;
     const updatedReservation = req.body;
     try {
@@ -66,7 +69,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+reservationRouter.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const result = await db('reservation').where({ id }).del();
@@ -81,4 +84,4 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-export default router;
+export default reservationRouter;

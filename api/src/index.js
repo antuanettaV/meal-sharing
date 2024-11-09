@@ -1,15 +1,15 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
-import express from "express";
-import knex from "./database_client.js";
-import cors from "cors";
-import bodyParser from "body-parser";
-import mealsRouter from "./routers/meals.js"; 
-import reservationRouter from "./routers/reservation.js"; 
-import reviewsRouter from "./routers/reviews.js"; 
+import "dotenv/config";
+import express from 'express';
+import knex from './database_client.js';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import mealsRouter from './routers/meals.js';
+import reservationRouter from './routers/reservation.js';
+import reviewsRouter from './routers/reviews.js';
 
 const app = express();
+const PORT = process.env.PORT || 3001;
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -29,20 +29,27 @@ apiRouter.get("/", async (req, res) => {
   }
 });
 
-apiRouter.use("/meals", mealsRouter); 
-apiRouter.use("/reservations", reservationRouter); 
-apiRouter.use("/reviews", reviewsRouter); 
+apiRouter.use("/meals", mealsRouter);
+apiRouter.use("/reservations", reservationRouter);
+apiRouter.use("/reviews", reviewsRouter);
 
 app.use("/api", apiRouter);
 
-const PORT = process.env.PORT || 3001; 
+app.get('/test-connection', async (req, res) => {
+  try {
+    const result = await knex.raw("SELECT 1 + 1 AS result");
+    res.json({ message: "Database connection is working!", result: result[0] });
+  } catch (error) {
+    console.error("Error testing database connection:", error);
+    res.status(500).json({ error: "Database connection failed." });
+  }
+});
+
+app.use((err, req, res, next) => {
+  console.error("Unhandled server error:", err);
+  res.status(err.status || 500).json({ error: err.message || "Server error" });
+});
+
 app.listen(PORT, () => {
   console.log(`API listening on port ${PORT}`);
 });
-
-import 'dotenv/config';
-
-console.log('DB_CLIENT:', process.env.DB_CLIENT);
-console.log('DB_HOST:', process.env.DB_HOST);
-console.log('DB_USER:', process.env.DB_USER);
-console.log('DB_NAME:', process.env.DB_NAME);

@@ -1,0 +1,41 @@
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+h3 {
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.description {
+  font-size: 1em;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.price {
+  font-size: 1.2em;
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+
+.card img {
+  width: 100%; 
+  height: auto; 
+  max-height: 200px; 
+  object-fit: cover; 
+  border-radius: 8px; 
+  margin-bottom: 12px; 
+}

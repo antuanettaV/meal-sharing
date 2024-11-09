@@ -1,18 +1,13 @@
 {
-  "name": "api",
-  "private": true,
+  "name": "meal-sharing",
   "version": "1.0.0",
+  "description": "Meal sharing application for sharing and discovering meals.",
   "main": "src/index.js",
   "type": "module",
+  "private": true,
   "engines": {
     "node": "^20.12.1",
     "npm": "^10.5.0"
-  },
-  "scripts": {
-    "dev": "nodemon src/index.mjs",
-    "start": "node src/index.mjs",
-    "format": "npx prettier . --write",
-    "check": "npx eslint . --fix"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
@@ -27,7 +22,21 @@
     "@eslint/js": "^9.0.0",
     "eslint": "^9.0.0",
     "globals": "^15.0.0",
+    "jest": "^27.5.1",
     "nodemon": "^3.1.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "supertest": "^6.3.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "format": "npx prettier . --write",
+    "lint": "npx eslint .",
+    "check": "npx eslint . --fix",
+    "test": "jest",
+    "test:watch": "jest --watch"
   }
 }

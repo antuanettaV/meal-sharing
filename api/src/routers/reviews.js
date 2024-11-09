@@ -1,10 +1,9 @@
 import express from 'express';
 import knex from '../database_client.js'; 
 
-const router = express.Router(); 
+const reviewsRouter = express.Router(); 
 
-
-router.get('/', async (req, res) => {
+reviewsRouter.get('/', async (req, res) => {
     try {
         const reviews = await knex('reviews');
         res.json(reviews);
@@ -13,8 +12,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-
-router.get('/meals/:meal_id/reviews', async (req, res) => {
+reviewsRouter.get('/meals/:meal_id/reviews', async (req, res) => {
     const { meal_id } = req.params;
     try {
         const reviews = await knex('reviews').where('meal_id', meal_id);
@@ -24,8 +22,7 @@ router.get('/meals/:meal_id/reviews', async (req, res) => {
     }
 });
 
-
-router.post('/', async (req, res) => {
+reviewsRouter.post('/', async (req, res) => {
     const newReview = req.body;
     try {
         const [id] = await knex('reviews').insert(newReview);
@@ -35,8 +32,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-
-router.get('/:id', async (req, res) => {
+reviewsRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const review = await knex('reviews').where('id', id).first();
@@ -50,8 +46,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-
-router.put('/:id', async (req, res) => {
+reviewsRouter.put('/:id', async (req, res) => {
     const { id } = req.params;
     const updatedReview = req.body;
     try {
@@ -66,8 +61,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-
-router.delete('/:id', async (req, res) => {
+reviewsRouter.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const count = await knex('reviews').where('id', id).del();
@@ -81,4 +75,4 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-export default router; 
+export default reviewsRouter;
