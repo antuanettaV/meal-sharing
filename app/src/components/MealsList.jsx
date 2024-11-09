@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Meal from "./Meals.jsx";  // Import the Meal component
+import Meal from "./Meals.jsx"; 
 
 const MealsList = () => {
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch meals from API or any data source
+
   useEffect(() => {
     fetch("http://localhost:3001/api/meals")
       .then((response) => {
@@ -15,8 +15,8 @@ const MealsList = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);  // Log the data to check the meal names
-        setMeals(data);  // Assuming API returns an array of meals
+        console.log(data);  
+        setMeals(data);  
         setLoading(false);
       })
       .catch((error) => {
@@ -25,7 +25,7 @@ const MealsList = () => {
       });
   }, []);
 
-  // If data is loading, show a loading message
+  
   if (loading) {
     return <p>Loading meals...</p>;
   }
@@ -33,7 +33,7 @@ const MealsList = () => {
   return (
     <div>
       {meals.map((meal) => (
-        <Meal key={meal.id} meal={meal} />  // Pass each meal to the Meal component
+        <Meal key={meal.id} meal={meal} />  
       ))}
     </div>
   );
