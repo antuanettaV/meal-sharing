@@ -1,0 +1,82 @@
+.searchSortContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 20px;
+}
+
+.searchInput {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 250px;
+}
+
+.searchButton {
+  padding: 10px 15px;
+  font-size: 1rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.searchButton:hover {
+  background-color: #2980b9;
+}
+
+.sortButton {
+  padding: 10px 15px;
+  font-size: 1rem;
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sortButton:hover {
+  background-color: #27ae60;
+}
+
+.sortContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.mealsGrid {
+ display: flex; 
+ flex-wrap: wrap;
+ justify-content: center;
+ gap: 15px;
+ max-width: 100%;
+ }
+
+ .searchBox {
+  outline: none;
+  padding: 10px 0 10px 20px;
+  border: solid 1px #2ecc71;
+  cursor: pointer;
+  margin: 20px 0 0 20px;
+  border-radius: 20px;
+   }
+
+   .sortOptions {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0 0 20px;
+   }
+
+ .btnSearch {
+  padding: 10px 15px;
+  background: inherit;
+  color: #000;
+  border: solid 1px #000;
+  cursor: pointer;
+  border-radius: 20px;
+  }

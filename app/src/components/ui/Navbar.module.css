@@ -1,0 +1,51 @@
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  height: auto;
+}
+
+.navbarList {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  margin-left: auto;
+}
+
+.navbarLinks {
+ padding: 5px;
+}
+
+.Links {
+  color: white;
+  text-decoration: none;
+  font-weight: 200;
+  letter-spacing: 1px;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
+  margin-inline-end: var(--spacing-20);
+}
+
+.logo {
+  height: 100px;
+  width: auto;
+  border-radius: 2px;
+}
+
+.textLink {
+color: white;
+text-decoration: none;
+font-size: 1.5rem;
+font-weight: bold;
+}

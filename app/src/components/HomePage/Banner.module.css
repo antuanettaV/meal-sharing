@@ -1,0 +1,19 @@
+.bannerContainer {
+    position: relative;
+    width: 100vw;             
+    height: 100vh;             
+    margin: 0;                
+    padding: 0;               
+    overflow: hidden;         
+}
+
+
+.bannerImage {
+    width: 100vw;             
+    height: 100%;             
+    object-fit: cover;        
+    position: absolute;       
+    top: 0;
+    left: 0;
+    display: block;           
+}
