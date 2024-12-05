@@ -22,11 +22,19 @@ const connection = knex({
 
 connection.raw("SELECT VERSION()")
   .then(() => {
-    console.log(`Connection to DB successful!`);
+    console.log("Connection to DB successful!");
   })
   .catch((error) => {
     console.error("Error connecting to the database:", error);
-    process.exit(1);
+    process.exit(1); 
   });
+
+connection.on('query', (query) => {
+  console.log(`Running query: ${query.sql}`);
+});
+
+connection.on('end', () => {
+  console.log('Connection closed.');
+});
 
 export default connection;

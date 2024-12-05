@@ -1,48 +1,27 @@
 import "dotenv/config";
-import express from 'express';
-import knex from './database_client.js';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import mealsRouter from './routers/meals.js';
-import reservationRouter from './routers/reservation.js';
-import reviewsRouter from './routers/reviews.js';
+import express from "express";
+import cors from "cors";
+import knex from "./database_client.js";
+import mealsRouter from "./routers/meals.js";
+import reservationRouter from "./routers/reservation.js";
+import reviewsRouter from "./routers/review.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors("*"));
+app.use(express.json());
 
-const apiRouter = express.Router();
-
-apiRouter.get("/", async (req, res) => {
-  const SHOW_TABLES_QUERY =
-    process.env.DB_CLIENT === "pg"
-      ? "SELECT * FROM pg_catalog.pg_tables;"
-      : "SHOW TABLES;"; 
-  try {
-    const tables = await knex.raw(SHOW_TABLES_QUERY);
-    res.json({ tables });
-  } catch (error) {
-    console.error("Error fetching tables:", error);
-    res.status(500).json({ error: "Failed to fetch tables" });
-  }
+app.get("/", (req, res) => {
+  res.json({ message: "API is running!" });
 });
 
-apiRouter.use("/meals", mealsRouter);
-apiRouter.use("/reservations", reservationRouter);
-apiRouter.use("/reviews", reviewsRouter);
+app.use("/api/meals", mealsRouter);
+app.use("/api/reservations", reservationRouter);
+app.use("/api/reviews", reviewsRouter);
 
-app.use("/api", apiRouter);
-
-app.get('/test-connection', async (req, res) => {
-  try {
-    const result = await knex.raw("SELECT 1 + 1 AS result");
-    res.json({ message: "Database connection is working!", result: result[0] });
-  } catch (error) {
-    console.error("Error testing database connection:", error);
-    res.status(500).json({ error: "Database connection failed." });
-  }
+app.use("*", (req, res) => {
+  res.status(404).json({ error: "Route not found" });
 });
 
 app.use((err, req, res, next) => {
@@ -53,3 +32,4 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`API listening on port ${PORT}`);
 });
+

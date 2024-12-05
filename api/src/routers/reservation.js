@@ -1,87 +1,73 @@
-import express from 'express';
-import knex from 'knex';
-import dotenv from 'dotenv';
+import express from "express";
+import knex from "../database_client.js";
 
-dotenv.config();
+const reservationsRouter = express.Router();
 
-const db = knex({
-    client: 'mysql',
-    connection: {
-        host: process.env.DB_HOST || '127.0.0.1',
-        port: process.env.DB_PORT || 3306,
-        user: process.env.DB_USER || 'root',
-        password: process.env.DB_PASSWORD || 'my-secret-pw',
-        database: process.env.DB_NAME || 'test'
-    }
+reservationsRouter.get("/", async (req, res) => {
+  try {
+    const reservations = await knex("reservation");
+    res.json(reservations);
+  } catch (error) {
+    console.error("Error retrieving reservations:", error);
+    res
+      .status(500)
+      .json({ error: "Server error while retrieving reservations." });
+  }
 });
 
-const reservationRouter = express.Router();
+reservationsRouter.post("/", async (req, res) => {
+  const {
+    meal_id,
+    number_of_guests,
+    contact_name,
+    contact_phonenumber,
+    contact_email,
+  } = req.body;
 
-reservationRouter.get('/', async (req, res) => {
-    try {
-        const reservations = await db.select().from('reservation');
-        res.status(200).json(reservations.length ? reservations : []);
-    } catch (error) {
-        console.error("Error retrieving reservations:", error);
-        res.status(500).json({ error: "An error occurred while retrieving reservations." });
+  if (!meal_id || !number_of_guests || !contact_name || !contact_phonenumber || !contact_email) {
+    return res.status(400).json({
+      error: "All fields are required: meal_id, number_of_guests, contact_name, contact_phonenumber, and contact_email.",
+    });
+  }
+
+  try {
+    const meal = await knex("meal").where("id", meal_id).first();
+    if (!meal) {
+      return res.status(404).json({ error: "Meal not found." });
     }
+
+    const totalReservedResult = await knex("reservation")
+      .where({ meal_id })
+      .sum("number_of_guests as total");
+    const totalReserved = totalReservedResult[0]?.total || 0;
+
+    const availableSpots = meal.max_reservations - totalReserved;
+
+    if (number_of_guests > availableSpots) {
+      return res.status(400).json({
+        error: `Not enough spots available. Only ${availableSpots} spots left.`,
+      });
+    }
+
+    const newReservation = {
+      meal_id,
+      number_of_guests,
+      contact_name,
+      contact_phonenumber,
+      contact_email,
+      created_date: new Date(),
+    };
+
+    const result = await knex("reservation").insert(newReservation);
+
+    res.status(201).json({
+      message: "Reservation successfully created",
+      id: result[0],
+    });
+  } catch (error) {
+    console.error("Error creating reservation:", error);
+    res.status(500).json({ error: "An error occurred while creating the reservation." });
+  }
 });
 
-reservationRouter.post('/', async (req, res) => {
-    const newReservation = req.body;
-    try {
-        const result = await db('reservation').insert(newReservation);
-        res.status(201).json({ message: 'Reservation created', id: result[0] });
-    } catch (error) {
-        console.error("Error adding reservation:", error);
-        res.status(500).json({ error: "An error occurred while adding the reservation." });
-    }
-});
-
-reservationRouter.get('/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const reservation = await db('reservation').where({ id }).first();
-        if (!reservation) {
-            res.status(404).json({ message: `Reservation with ID ${id} not found.` });
-        } else {
-            res.status(200).json(reservation);
-        }
-    } catch (error) {
-        console.error("Error retrieving reservation by id:", error);
-        res.status(500).json({ error: `An error occurred while retrieving reservation with ID ${id}.` });
-    }
-});
-
-reservationRouter.put('/:id', async (req, res) => {
-    const { id } = req.params;
-    const updatedReservation = req.body;
-    try {
-        const result = await db('reservation').where({ id }).update(updatedReservation);
-        if (result === 0) {
-            res.status(404).json({ message: `Reservation with ID ${id} not found.` });
-        } else {
-            res.status(200).json({ message: `Reservation with ID ${id} updated.` });
-        }
-    } catch (error) {
-        console.error("Error updating reservation:", error);
-        res.status(500).json({ error: `An error occurred while updating reservation with ID ${id}.` });
-    }
-});
-
-reservationRouter.delete('/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const result = await db('reservation').where({ id }).del();
-        if (result === 0) {
-            res.status(404).json({ message: `Reservation with ID ${id} not found.` });
-        } else {
-            res.status(200).json({ message: `Reservation with ID ${id} deleted.` });
-        }
-    } catch (error) {
-        console.error("Error deleting reservation:", error);
-        res.status(500).json({ error: `An error occurred while deleting reservation with ID ${id}.` });
-    }
-});
-
-export default reservationRouter;
+export default reservationsRouter;
